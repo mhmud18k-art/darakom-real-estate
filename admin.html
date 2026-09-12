@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة التحكم — داركم العقاري</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=1787519574">
+<style>
+  .panel{max-width:1020px;margin:auto;padding:32px var(--pad)}
+  .box{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);padding:28px;margin-bottom:24px;box-shadow:var(--sh-1)}
+  .box h2{font-family:var(--f-display);font-size:26px;margin-bottom:18px}
+  .row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  label{display:block;font-size:12px;color:var(--stone);margin-bottom:6px;letter-spacing:1px}
+  input,select,textarea{
+    width:100%;padding:12px 15px;border:1px solid var(--line);
+    border-radius:14px;background:var(--parchment);
+  }
+  textarea{min-height:96px;resize:vertical}
+  .btn{
+    background:var(--ink);color:var(--parchment);border:none;
+    padding:12px 26px;border-radius:100px;cursor:pointer;transition:background .25s;
+  }
+  .btn:hover{background:var(--tile)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn--ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn--danger{background:#8B2E2E}
+  .mt{margin-top:18px}
+  .item{display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+  .item img{width:78px;height:58px;object-fit:cover;border-radius:12px;flex:none}
+  .item__t{flex:1;min-width:0}
+  .item__t b{font-family:var(--f-display);font-size:18px;display:block}
+  .item__t span{font-size:13px;color:var(--stone)}
+  .msg{padding:12px 16px;border-radius:14px;font-size:14px;margin-top:14px;display:none}
+  .msg--ok{background:#E4EFE7;color:#245C36;display:block}
+  .msg--err{background:#F6E3E3;color:#8B2E2E;display:block}
+  .login{max-width:420px;margin:12vh auto;padding:0 var(--pad)}
+  .hidden{display:none !important}
+
+  .drop{
+    border:2px dashed var(--line);border-radius:22px;
+    padding:26px;text-align:center;cursor:pointer;
+    background:var(--parchment);transition:border-color .25s,background .25s;
+  }
+  .drop:hover,.drop.over{border-color:var(--tile);background:#fff}
+  .drop b{display:block;font-family:var(--f-display);font-size:20px;margin-bottom:4px}
+  .drop span{font-size:13px;color:var(--stone)}
+  .thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .thumb{position:relative;width:96px;height:74px;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .thumb button{
+    position:absolute;top:5px;left:5px;width:22px;height:22px;border-radius:50%;
+    background:rgba(139,46,46,.92);color:#fff;border:none;cursor:pointer;font-size:13px;line-height:1;
+  }
+  .thumb i{
+    position:absolute;bottom:0;inset-inline:0;background:rgba(20,16,13,.7);
+    color:#fff;font-size:10px;font-style:normal;text-align:center;padding:2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- تسجيل الدخول -->
+<section class="login" id="loginView">
+  <div class="box">
+    <h2>لوحة تحكم داركم</h2>
+    <div class="mt">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="email" autocomplete="username">
+    </div>
+    <div class="mt">
+      <label>كلمة المرور</label>
+      <input type="password" id="pass" autocomplete="current-password">
+    </div>
+    <button class="btn mt" id="loginBtn">دخول</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</section>
+
+<!-- اللوحة -->
+<section class="panel hidden" id="panelView">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:12px;flex-wrap:wrap">
+    <h1 style="font-family:var(--f-display);font-size:32px">إدارة العقارات</h1>
+    <div style="display:flex;gap:10px">
+      <a class="btn btn--ghost" href="index.html" target="_blank">عرض الموقع</a>
+      <button class="btn btn--ghost" id="logoutBtn">خروج</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2 id="formTitle">إضافة عقار جديد</h2>
+    <input type="hidden" id="editId">
+    <div class="row">
+      <div><label>عنوان العقار</label><input id="f_title" placeholder="شقة مشمسة بإطلالة"></div>
+      <div><label>المنطقة</label><select id="f_area"></select></div>
+    </div>
+    <div class="row mt">
+      <div><label>النوع</label>
+        <select id="f_type"><option>للبيع</option><option>للإيجار</option></select>
+      </div>
+      <div><label>السعر</label><input id="f_price" type="number" inputmode="numeric"></div>
+      <div><label>العملة</label>
+        <select id="f_currency"><option>$</option><option>ل.س</option></select>
+      </div>
+    </div>
+    <div class="row mt">
+      <div><label>عدد الغرف</label><input id="f_rooms" type="number"></div>
+      <div><label>المساحة (م²)</label><input id="f_size" type="number"></div>
+      <div><label>الطابق</label><input id="f_floor"></div>
+    </div>
+    <div class="mt"><label>الوصف</label><textarea id="f_desc" placeholder="تفاصيل العقار، الخدمات القريبة، حالة البناء…"></textarea></div>
+
+    <div class="mt">
+      <label>صور العقار (اختياري — إذا ما في صور بيظهر للزبون خيار حجز معاينة)</label>
+      <div class="drop" id="drop">
+        <b>اختر الصور من جهازك</b>
+        <span>اضغط هون، أو اسحب الصور ولزقها — بتنضغط تلقائياً</span>
+      </div>
+      <input type="file" id="f_files" accept="image/*" multiple hidden>
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+
+    <div class="mt">
+      <label>رابط فيديو (اختياري — من يوتيوب)</label>
+      <input type="url" id="f_video" placeholder="https://youtu.be/xxxxxxxx" dir="ltr">
+      <p style="font-size:12.5px;color:var(--stone);margin-top:6px">
+        ارفع الفيديو على يوتيوب واختار "غير مُدرج / Unlisted" حتى ما يظهر بالبحث، وانسخ الرابط هون.
+      </p>
+    </div>
+
+    <div class="mt" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="saveBtn">حفظ العقار</button>
+      <button class="btn btn--ghost hidden" id="cancelBtn">إلغاء التعديل</button>
+    </div>
+    <div class="msg" id="formMsg"></div>
+  </div>
+
+  <div class="box">
+    <h2>العقارات المنشورة</h2>
+    <div id="list"></div>
+  </div>
+</section>
+
+<script type="module" src="admin.js?v=1787519574"></script>
+</body>
+</html>
